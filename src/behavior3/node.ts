@@ -56,8 +56,10 @@ export interface NodeDef<GroupType extends string = string> {
         desc: string;
         /** Input `value`, only one is allowed between `value` and this arg.*/
         oneof?: string;
-        /** The name of the checker function in context, which is used to check the validity of the arg. */
+        /** The name of the checker function in behavior3 editor, which is used to check the validity of the arg. */
         checker?: string;
+        /** The name of the visible function in behavior3 editor, which is used to control the visibility of the arg before use. */
+        visible?: string;
         default?: unknown;
         options?: Array<{
             /** Match the args of the node */
