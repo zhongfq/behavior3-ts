@@ -240,8 +240,8 @@ export abstract class Node {
             console.info(
                 `[DEBUG] behavior3 -> ${indent}${this.name}: tree:${this.cfg.tree.name} tree_id:${tree.id}, ` +
                     `node:${this.id}, status:${status}, values:{${varStr}} args:${JSON.stringify(
-                        cfg.args,
-                    )}`,
+                        cfg.args
+                    )}`
             );
         }
 
@@ -288,6 +288,13 @@ export abstract class Node {
 
     info(msg: string) {
         console.info(`${this.cfg.tree.name}->${this.name}#${this.id}: ${msg}`);
+    }
+
+    /**
+     * use console.log to print log message
+     */
+    log(msg: string) {
+        console.log(`${this.cfg.tree.name}->${this.name}#${this.id}: ${msg}`);
     }
 
     protected _checkOneof<V>(inputIndex: number, argValue: V | undefined, defaultValue?: V) {

@@ -1,7 +1,7 @@
 import { type Context } from "../../context";
 import { Node, NodeDef, Status } from "../../node";
 import { registerNode } from "../../register-node";
-import { Stack } from "../../stack";
+import { Stack, StackSlice } from "../../stack";
 import { Tree } from "../../tree";
 
 const EMPTY_STACK: Stack = new Stack(null!);
@@ -21,7 +21,7 @@ const EMPTY_STACK: Stack = new Stack(null!);
 @registerNode
 export class Parallel extends Node {
     override onTick(tree: Tree<Context, unknown>, status: Status): Status {
-        const last: Stack[] = tree.resume(this) ?? [];
+        const last: StackSlice[] = tree.resume(this) ?? [];
         const stack = tree.stack;
         const level = stack.length;
         const children = this.children;
@@ -32,7 +32,7 @@ export class Parallel extends Node {
             if (childStack === undefined) {
                 status = children[i].tick(tree);
             } else if (childStack.length > 0) {
-                childStack.move(stack, 0, childStack.length);
+                childStack.move(stack, 0);
                 while (stack.length > level) {
                     status = stack.top()!.tick(tree);
                     if (status === "running") {
@@ -45,9 +45,9 @@ export class Parallel extends Node {
 
             if (status === "running") {
                 if (childStack === undefined) {
-                    childStack = new Stack(tree);
+                    childStack = new StackSlice();
                 }
-                stack.move(childStack, level, stack.length - level);
+                stack.move(childStack, level);
             } else {
                 count++;
                 childStack = EMPTY_STACK;

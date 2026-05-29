@@ -2,20 +2,29 @@ import type { Context } from "./context";
 import type { Node } from "./node";
 import { Tree } from "./tree";
 
-export class Stack {
-    private _nodes: Node[] = [];
-    private _tree: Tree<Context, unknown>;
-
-    constructor(tree: Tree<Context, unknown>) {
-        this._tree = tree;
-    }
+export class StackSlice {
+    protected _nodes: Node[] = [];
 
     get length() {
         return this._nodes.length;
     }
 
-    indexOf(node: Node) {
-        return this._nodes.indexOf(node);
+    move(dest: StackSlice, start: number) {
+        const count = this._nodes.length - start;
+        dest._nodes.push(...this._nodes.splice(start, count));
+    }
+
+    clear() {
+        this._nodes.length = 0;
+    }
+}
+
+export class Stack extends StackSlice {
+    private _tree: Tree<Context, unknown>;
+
+    constructor(tree: Tree<Context, unknown>) {
+        super();
+        this._tree = tree;
     }
 
     top(): Node | undefined {
@@ -41,11 +50,7 @@ export class Stack {
         }
     }
 
-    move(dest: Stack, start: number, count: number) {
-        dest._nodes.push(...this._nodes.splice(start, count));
-    }
-
-    clear() {
+    override clear() {
         this.popTo(0);
     }
 }

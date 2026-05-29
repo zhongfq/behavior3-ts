@@ -1,13 +1,13 @@
 import { type Context } from "../../context";
 import { Node, NodeDef, Status } from "../../node";
 import { registerNode } from "../../register-node";
-import { Stack } from "../../stack";
+import { StackSlice } from "../../stack";
 import { Tree } from "../../tree";
 
 @registerNode
 export class Watchdog extends Node {
     override onTick(tree: Tree<Context, unknown>, status: Status): Status {
-        let last: Stack | undefined = tree.resume(this);
+        let last: StackSlice | undefined = tree.resume(this);
         const level = tree.stack.length;
 
         const lastStatus = tree.__lastStatus;
@@ -27,7 +27,7 @@ export class Watchdog extends Node {
         } else if (last === undefined) {
             status = this.children[1].tick(tree);
         } else {
-            last.move(tree.stack, 0, last.length);
+            last.move(tree.stack, 0);
             while (tree.stack.length > level) {
                 const child = tree.stack.top()!;
                 status = child.tick(tree);
@@ -39,9 +39,9 @@ export class Watchdog extends Node {
 
         if (status === "running") {
             if (last === undefined) {
-                last = new Stack(tree);
+                last = new StackSlice();
             }
-            tree.stack.move(last, level, tree.stack.length - level);
+            tree.stack.move(last, level);
             return tree.yield(this, last);
         } else {
             return status;
