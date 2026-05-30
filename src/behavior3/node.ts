@@ -23,9 +23,9 @@ export interface NodeDef<GroupType extends string = string> {
     type: "Action" | "Decorator" | "Condition" | "Composite";
     desc: string;
     /** ["input1?", "input2..."] */
-    input?: string[];
+    input?: string[] | { name: string; visible?: string; checker?: string }[];
     /** ["output1", "output2..."] */
-    output?: string[];
+    output?: string[] | { name: string; visible?: string; checker?: string }[];
     args?: {
         name: string;
         type:
@@ -240,8 +240,8 @@ export abstract class Node {
             console.info(
                 `[DEBUG] behavior3 -> ${indent}${this.name}: tree:${this.cfg.tree.name} tree_id:${tree.id}, ` +
                     `node:${this.id}, status:${status}, values:{${varStr}} args:${JSON.stringify(
-                        cfg.args
-                    )}`
+                        cfg.args,
+                    )}`,
             );
         }
 
